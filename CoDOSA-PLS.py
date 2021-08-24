@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 #author: MingmingGuo
-#If you use CoDOSA model in your research, please cite the following paper:M. M. Guo, W. Cui*, Theoretical investigation of metal nonmetal co decorated graphyne 1 for electrocatalytic water splitting by DFT stud y and CoD O SA model. Submitted, 2021.
+#If you use CoDOSA model in your research, please cite the following paper:M. M. Guo, W. Cui*, Theoretical investigation of metal-nonmetal co-decorated graphyne for electrocatalytic water splitting by DFT study and CoDOSA model. Submitted, 2021.
 
 
 #imports
@@ -16,7 +16,7 @@ import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score
 
 #read  csv data
-chemisorption_data = pd.read_csv("D-OER-CSV.csv")
+chemisorption_data = pd.read_csv("CoDOSA-OER.csv")
 print(chemisorption_data.info(),chemisorption_data.columns)
 print(chemisorption_data.describe())
 
@@ -25,7 +25,7 @@ print(chemisorption_data.describe())
 from sklearn.model_selection import train_test_split
 train_set, test_set = train_test_split(chemisorption_data,test_size=0.2,random_state=10)
 
-#correlation analysis to  the property
+#correlation analysis to the property
 corr_matrix = chemisorption_data.corr()
 print('Input variables correlation analysis:')
 print(corr_matrix['predict_property'].sort_values(ascending=False))
@@ -43,8 +43,6 @@ from sklearn.preprocessing import StandardScaler
 stdscaler = StandardScaler()
 train_set_scaled = stdscaler.fit_transform(train_set_numdata_inputs)
 
-
-
 #RMSE
 from sklearn.metrics import mean_squared_error
 deltaE_pred = lin_reg.predict(train_set_scaled)
@@ -54,7 +52,6 @@ def rmse(trueE,predE):
     rmse = np.sqrt(mse)
     print('RMSE: ',rmse)
     return rmse
-
 
 #R^2
 def r2(trueE,predE):
@@ -86,7 +83,6 @@ print('R2=',pls_r2)
 print('RMSE=',pls_rmse)
 display_scores(lin_reg_rmse_scores)
 
-
 #Regression model, parameter
 PLS_reg_setup = PLSRegression(scale=True)
 param_grid = {'n_components': range(1, 4)}
@@ -94,10 +90,8 @@ param_grid = {'n_components': range(1, 4)}
 #GridSearchCV Automatic tuning parameter
 gsearch = GridSearchCV(PLS_reg_setup, param_grid)
 
-#在训练集上训练模型
+#Train the model on the training set
 PLS_reg = gsearch.fit(train_set_scaled,train_set_trueE)
-
-
 
 PLS_reg_predection = PLS_reg.predict(train_set_scaled)
 print('\nPLS:')
@@ -105,7 +99,6 @@ pls_r2 = r2_score(train_set_trueE,PLS_reg_predection)
 pls_rmse =np.sqrt(mean_squared_error(train_set_trueE,PLS_reg_predection))
 print('R2=',pls_r2)
 print('RMSE=',pls_rmse)
-
 
 ### Model evaluation on test set
 print('\n\nMODEL EVALUATION ON TEST SET')
@@ -117,7 +110,6 @@ test_set_trueE = test_set['predict_property'].copy()
 #scaling test set data (only transforming no fit)
 test_set_input_scaled = stdscaler.transform(test_set_input_vals)
 
-
 #PLS 
 PLS_reg_test_predictions = PLS_reg.predict(test_set_input_scaled)
 print('\nPLS test set predictions')
@@ -128,14 +120,11 @@ pls_rmse =np.sqrt(mean_squared_error(test_set_trueE,PLS_reg_test_predections))
 print('R2=',pls_r2)
 print('RMSE=',pls_rmse)
 
-
-
 #The output data
 #df = pd.DataFrame(test_set_trueE)
 #df.to_csv('forest_test_set_trueE.csv')
 #df = pd.DataFrame(forest_reg_test_predictions)
 #df.to_csv('forest_reg_test_predictions.csv')
-
 
 #plotting real values vs predicted
 plt.scatter(PLS_reg_predection,train_set_trueE,label = 'Training set')
