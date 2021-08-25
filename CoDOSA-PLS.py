@@ -8,11 +8,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import pandas as pd
 from sklearn.cross_decomposition import PLSRegression
 from sklearn import datasets 
 from sklearn.model_selection import GridSearchCV
-import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score
 
 #read  csv data
